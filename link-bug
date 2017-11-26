@@ -1,0 +1,244 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+typedef int ElemType;
+
+/**
+*链表通用类型
+*ElemType 代表自定义的数据类型
+*struct Node *next 代表 结构体指针（指向下一个结构体，完成链表动作）
+*/
+typedef struct Node{
+ ElemType data;
+ struct Node *next;
+}Node;
+
+/*==========单链表的初始化================*/
+/*
+*头结点指针数据域设置为空
+*/
+void initList(Node **pNode){
+ *pNode=NULL;
+}
+/*===========单链表的创建=================*/
+/*
+*功能实现：通过用户不断输入数据，创建链表
+*利用游标俩个指针（p1,p2），将申请下的数据块(存入用户输入数据)，链接起来
+*/
+Node *create(Node *pHead){
+ Node *p1;
+ Node *p2;
+ p1=p2=(Node *)malloc(sizeof(Node));     //申请内存空间
+ memset(p1,0,sizeof(Node));       //存入数据域清空
+ //int k[10]={100000 ,100000, 432, 4325, 345, 3456,3546,345}
+
+ scanf("%d",&p1->data);
+ p1->next=NULL;
+ while(p1->data>0){         //输入负数结束
+  if(pHead==NULL)
+   pHead=p1;
+  else
+   p2->next=p1;
+  p2=p1;
+  p1=(Node *)malloc(sizeof(Node));
+  memset(p1,0,sizeof(Node));
+  scanf("%d",&p1->data);
+  p1->next=NULL;
+ }
+ return pHead;
+}
+/*=================链表的遍历==================*/
+/**
+*从头结点开始，不断遍历出数据域的内容将表遍历
+*/
+void printList(Node *pHead){
+ if(NULL==pHead)
+  printf("链表为空\n");
+ else{
+  while(pHead!=NULL){
+   printf("%d ",pHead->data);
+   pHead=pHead->next;
+  }
+ }
+ printf("\n");
+}
+/*===============插入节点==================*/
+/**
+*Node **pNode 传入头结点空间地址
+*int i 传入要插入的结点位置
+*/
+void insert_data(Node **pNode,int i, int e){
+ Node *temp;
+ Node *target;
+ Node *p;
+ int item;
+ int j=1;
+ printf("insert_data:\n");
+ item=e;
+ target=*pNode;
+ for(;j<i-1;target=target->next,++j);  //不断移动target位置，到要插入结点位置，
+ temp=(Node *)malloc(sizeof(Node));   //申请内存空间
+ temp->data=item;       //存入要存入的数据位置
+ p=target->next;
+ target->next=temp;
+ temp->next=p;
+}
+/*===============删除节点====================*/
+/**
+*删除结点后，释放内存空间free(temp)
+*/
+Node *pHead=NULL;
+void delete1(Node *pNode){
+
+}
+
+void delete_data(Node **pNode,int i){
+ Node *target;
+ Node *temp;
+ int j=1;
+ target=*pNode;
+ if(i=1){
+
+ }
+
+ if(i=2){
+	 temp=target->next;
+	 target->next=temp->next;
+	 free(temp);
+ }
+
+ else{
+ for(;j<=i-1;target=target->next,++j);
+ temp=target->next;
+ target->next=temp->next;
+ free(temp);
+ }
+}
+
+Status ListDelete(LinkList L, int i, ElemType * e)
+/* 算法2.10。不改变L */
+{
+    /* 在带头结点的单链线性表L中，删除第i个元素，并由e返回其值 */
+    int j = 0;
+    LinkList p = L,
+    q;
+    while (p - >next && j < i - 1)
+    /* 寻找第i个结点，并令p指向其前岖 */
+    {
+        p = p - >next;
+        j++;
+    }
+    if (!p - >next || j > i - 1)
+    /* 删除位置不合理 */
+    return ERROR;
+    q = p - >next;
+    /* 删除并释放结点 */
+    p - >next = q - >next; * e = q - >data;
+    free(q);
+    return OK;
+}
+
+
+/*===============查找结点====================*/
+int search_data(Node *pNode,int elem){
+ Node *target;
+ int i=1;
+ for(target=pNode;target->data!=elem && target->next!=NULL;++i,target=target->next);
+ if(target->next==NULL)
+  return 0;
+ else
+  return i;
+
+}
+
+
+int find_min(Node *pNode){
+	int *a = (int *) malloc(sizeof(int)*2);
+	 int temp;
+	 int j=1;
+	 int i=1;
+	 int min=100000;
+	 a[0]=1;
+	 a[1]=1;
+	 a[2]=1;
+	  while(pNode!=NULL)
+	  {
+		  temp=pNode->data;
+		  if (min>temp){
+			  min= temp;
+			  j=i;
+		  }
+			pNode=pNode->next;
+			i++;
+	  }
+	  a[0]=i-1;
+	  a[1]=j;
+	  a[2]=min;
+
+
+return a;
+}
+
+int main(){
+ int i=0;
+ int *c=NULL;
+
+ initList(&pHead);
+
+ pHead=create(pHead);
+
+ //insert_data(&pHead,1, 100000);
+ //insert_data(&pHead,1, 100000);
+ printList(pHead);
+ c=find_min(pHead);
+
+ printf("There are %d data.",c[0]);
+ printf("min data order is: %d.",c[1]);
+ printf("min data is: %2d\n",c[2]);
+ delete_data(&pHead,1);
+ printList(pHead);
+ c=find_min(pHead);
+ printf("There are %d data.",c[0]);
+ printf("min data order is: %d.",c[1]);
+ printf("min data is: %2d\n",c[2]);
+ delete_data(&pHead,1);
+
+ printList(pHead);
+ c=find_min(pHead);
+ printf("There are %d data.",c[0]);
+ printf("min data order is: %d.",c[1]);
+ printf("min data is: %2d\n",c[2]);
+ delete_data(&pHead,c[1]);
+
+ printList(pHead);
+ /*
+ c=find_min(pHead);
+ printf("There are %d data.",c[0]);
+ printf("min data order is: %d.",c[1]);
+ printf("min data is: %2d\n",c[2]);
+ delete_data(&pHead,c[1]);
+
+ c=find_min(pHead);
+ printf("There are %d data.",c[0]);
+ printf("min data order is: %d.",c[1]);
+ printf("min data is: %2d\n",c[2]);
+ delete_data(&pHead,c[1]);
+
+ c=find_min(pHead);
+ printf("There are %d data.",c[0]);
+ printf("min data order is: %d.",c[1]);
+ printf("min data is: %2d\n",c[2]);
+ delete_data(&pHead,c[1]);
+
+ c=find_min(pHead);
+ printf("There are %d data.",c[0]);
+ printf("min data order is: %d.",c[1]);
+ printf("min data is: %2d\n",c[2]);
+ */
+
+ //delete_data(&pHead,c[1]);
+
+ //printf("data node postition is：%d",search_data(pHead,5));
+ return 0;
+}
