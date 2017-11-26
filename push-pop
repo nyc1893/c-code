@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MAXSTACK 100 /*max stack size*/
+int stack[MAXSTACK];
+int top=-1;		//top size define
+int isEmpty();
+void push(int);
+int pop();
+int mm[MAXSTACK]={};
+int min=100;
+int number=4;
+int main(int argc, char *argv[]) {
+	int value;
+	int i;
+	srand((unsigned) time(NULL)); //random number
+	for(i=0;i<=number;i++){
+		value=rand() % 100;
+		 printf("input data is=%d\n",value);
+		push(value);
+	}
+	printf("====================\n");
+int j=0;
+
+		for(i=0;i<=number;i++){
+			mm[i]=pop();
+			 if(mm[i]<min)
+			 {
+			   min=mm[i];
+			   j=i;
+			//   printf("i is=%d\n",j);
+			 }
+			 printf("stored data is=%d\n",mm[i]);
+		}
+		printf("====================\n");
+		printf("min=%d,is the No.%d number\n",min,j+1);
+
+		for(i=0;i<=number;i++){
+			if(i!=j)
+			push(mm[i]);
+
+		}
+
+		number--;
+		for(i=0;i<=number;i++){
+			mm[i]=pop();
+			 if(mm[i]<min)
+			 {
+			   min=mm[i];
+			   j=i;
+			//   printf("i is=%d\n",j);
+			 }
+			 printf("stored data is=%d\n",mm[i]);
+		}
+
+
+
+
+		printf("====================\n");
+		while(!isEmpty()){
+			printf("again stored data is=%d\n",pop());
+		}
+
+	//pop();
+	return 0;
+}
+
+int isEmpty(){
+	if(top==-1){
+		return 1;
+	}else{
+		return 0;
+	}
+}
+
+void push(int data){
+	if(top>=MAXSTACK){
+		printf("stack is full, can not add!\n");
+	}else{
+		top++;
+		stack[top]=data;
+	}
+
+}
+
+int pop(){
+	int data;
+	if(isEmpty()){
+		printf("stack is empty\n");
+	}else{
+		data=stack[top];
+		top--;
+		return data;
+	}
+}
