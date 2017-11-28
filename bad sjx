@@ -1,0 +1,293 @@
+#include <stdio.h>
+#include <math.h>
+#include "rngs.h"                      /* the multi-stream generator */
+#include "rvgs.h"                      /* random variate generators  */
+
+#define START         0.0              /* initial time                   */
+#define STOP      8.0              /* terminal (close the door) time */
+#define INFINITY   (100.0 * STOP)      /* must be much larger than STOP  */
+#include <malloc.h>
+
+/*单向链表*/
+struct Student/*建立学生信息结构体模型*/
+{
+
+	int cName;/*学生姓名*/
+	int iNumber;/*学生学号*/
+    struct student *next;/*指向本结构体类型的指针类型*/
+};
+
+int iCount;/*全局变量表示链表长度*/
+
+struct Student *Create();/*创建链表函数声明*/
+void print(struct Student *);/*遍历输出链表函数声明*/
+//struct Student *Insert(struct Student *pHead,int number);
+void Delete(struct Student *pHead,int number);
+void insert_data(struct Student **pNode,int i, int e,int t);
+int find_min(struct Student *pHead);
+int Min(int a, int c);
+int GetArrival();
+int GetService();
+
+   int main(void)
+{
+  struct {
+    double arrival;                 /* next arrival time                   */
+    double completion;              /* next completion time                */
+    double current;                 /* current time                        */
+    double next;                    /* next (most imminent) event time     */
+    double last;                    /* last arrival time                   */
+  } t;
+  struct {
+    double node;                    /* time integrated number in the node  */
+    double queue;                   /* time integrated number in the queue */
+    double service;                 /* time integrated number in service   */
+  } area      = {0.0, 0.0, 0.0};
+  long index  = 0;                  /* used to count departed jobs         */
+  long number = 0;                  /* number in the node                  */
+
+
+  t.current    = START;           /* set the clock                         */
+  t.arrival    = GetArrival();    /* schedule the first arrival            */
+  t.completion = INFINITY;        /* the first event can't be a completion */
+  struct Student *pHead;/*声明一个指向学生信息结构体的指针作pHead为头结点传递*/
+     pHead=Create();/*创建链表，返回链表的头指针给pHead*/
+     print(pHead);/*将指针pHead传入输出函数遍历输出*/
+ /*    insert_data(&pHead,2,33,999);
+     print(pHead);
+     Delete(pHead,2);
+     int *c=NULL;
+     c=find_min(pHead);*/
+     int *c=NULL;
+      printf("min data order is: %d.",c[1]);
+      printf("min data is: %2d\n",c[0]);
+      printf("min data time is: %2d\n",c[2]);
+     print(pHead);/*将指针pHead传入输出函数遍历输出*/
+
+  while ((t.arrival < STOP) || (number > 0)) {
+    t.next          = Min(t.arrival, t.completion);  /* next event time   */
+    if (number > 0)  {                               /* update integrals  */
+      area.node    += (t.next - t.current) * number;
+      area.queue   += (t.next - t.current) * (number - 1);
+      area.service += (t.next - t.current);
+    }
+    t.current       = t.next;                    /* advance the clock */
+
+    if (t.current == t.arrival)  {               /* process an arrival */
+      number++;
+      t.arrival     = GetArrival();
+      if (t.arrival > STOP)  {
+        t.last      = t.current;
+        t.arrival   = INFINITY;
+      }
+      if(number > 1){
+    	 int value= GetService();
+    //	  insert_data(&pHead,2,value,t.arrival);
+
+      }
+      if (number == 1){
+        t.completion = t.current + GetService();
+    }
+   else{
+		  index++;
+		  c=find_min(pHead);
+		  if (number > 0){
+
+		//	t.completion = t.current + c[0];
+
+		  }
+		  else
+			t.completion = INFINITY;
+
+		  number--;
+   	   }
+    }
+  }
+
+  printf("\nfor %ld jobs\n", index);
+  printf("   average interarrival time = %6.2f\n", t.last / index);
+  printf("   average wait ............ = %6.2f\n", area.node / index);
+  printf("   average delay ........... = %6.2f\n", area.queue / index);
+  printf("   average service time .... = %6.2f\n", area.service / index);
+  printf("   average # in the node ... = %6.2f\n", area.node / t.current);
+  printf("   average # in the queue .. = %6.2f\n", area.queue / t.current);
+  printf("   utilization ............. = %6.2f\n", area.service / t.current);
+  return (0);
+}
+
+   int Min(int a, int c)
+  /* ------------------------------
+   * return the smaller of a, b
+   * ------------------------------
+   */
+  {
+    if (a < c)
+      return (a);
+    else
+      return (c);
+  }
+
+
+   int GetArrival()
+  /* ---------------------------------------------
+   * generate the next arrival time, with rate 1/2
+   * ---------------------------------------------
+   */
+  {
+    static int arrival = START;
+   // int a[6]={1,2,3,4,5,6};
+
+    int vv=2;
+
+   // SelectStream(0);
+   // arrival += Exponential(2.0);
+
+    arrival += vv;
+    //printf("arrival=%d\n", vv);
+    return (arrival);
+
+   // return (arrival);
+  }
+
+   int GetService()
+  /* --------------------------------------------
+   * generate the next service time with rate 2/3
+   * --------------------------------------------
+   */
+  {
+  //	  int b[6]={1,1,1,1,2,3};
+    //SelectStream(1);
+   // return (Erlang(5, 0.3));
+
+	   int vv=3;
+
+  	//  printf("service=%d\n", vv);
+  	  return vv;
+  	//   return (5);
+  }
+
+   int find_min(struct Student *pHead)
+     {
+      //   struct Student *pTemp;/*定义指向一个学生信息结构体类型的临时指针*/
+         int iIndex=1;/*定义并出事哈变量iIndex，用来标识第几个学生（信息）*/
+         int temp,temp2;
+         int j=1;
+         int min=INFINITY;
+         int time=0;
+         int *a = (int *) malloc(sizeof(int)*2);
+         a[0]=1;
+         a[1]=1;
+         a[2]=1;
+       //  pTemp=pHead;/*指针得到首结点的地址*/
+         while(pHead!=NULL)/*当临时指针不指向NULL时*/
+         {
+
+         //    printf("name：%s",pTemp->cName); /*输出姓名*/
+
+             temp=pHead->cName;/*移动临时指针到下一个结点*/
+             temp2=pHead->iNumber;
+     		  if (min>temp){
+     			  min= temp;
+     			  j=iIndex;
+     			  time=temp2;
+     		  }
+     		  pHead=pHead->next;
+     		  iIndex++;/*进行自加运算*/
+
+         }
+         a[0]=min;
+         a[1]=j;
+        a[2]=time;
+         return a;
+     }
+
+   struct Student *Create()
+   {
+       struct Student *pHead=NULL;/*初始化链表，头指针为空*/
+       struct Student *pEnd,*pNew;
+       iCount=0;/*初始化链表长度*/
+       pEnd=pNew=(struct Student *)malloc(sizeof(struct Student));/*动态开辟一个学生信息结构体类型大小的空间，使得pEnd和pNew同时指向该结构体空间*/
+
+       pNew->cName	=INFINITY;
+       pNew->iNumber=INFINITY;
+
+
+       while(pNew->iNumber!=0)/*设定循环结束条件——学号不为0时*/
+       {
+           iCount++;/*链表长度+1，即学生信息个数+1*/
+           if(iCount==1)/*如果链表长度刚刚加为1，执行*/
+           {
+               pNew->next=pHead;/*使指针指向为空*/
+               pEnd=pNew;/*跟踪新加入的结点*/
+               pHead=pNew;/*头结点指向首结点*/
+           }
+           else/*如果链表已经建立，长度大于等于2时，执行*/
+           {
+               pNew->next=NULL;/*新结点的指针为空*/
+               pEnd->next=pNew;/*原来的结点指向新结点*/
+               pEnd=pNew;/*pEnd指向新结点*/
+           }
+           pNew=(struct Student *)malloc(sizeof(struct Student));/*再次分配结点的内存空间*/
+     //      scanf("%d",&pNew->cName);/*从输入流获取第一个学生姓名*/
+     //      scanf("%d",&pNew->iNumber);/*从输入流获取第一个学生学号*/
+       }
+       free(pNew);/*释放结点空间*/
+       return pHead;/*返回创建出的头指针*/
+   }
+
+   void print(struct Student *pHead)
+   {
+       struct Student *pTemp;/*定义指向一个学生信息结构体类型的临时指针*/
+       int iIndex=1;/*定义并出事哈变量iIndex，用来标识第几个学生（信息）*/
+       printf("All have %d students:\n",iCount);
+       pTemp=pHead;/*指针得到首结点的地址*/
+       while(pTemp!=NULL)/*当临时指针不指向NULL时*/
+       {
+           printf("No.%d inform:\n",iIndex);
+           printf("Name:%d, ",pTemp->cName); /*输出姓名*/
+           printf("ID:%d\n",pTemp->iNumber);/*输出学号*/
+           pTemp=pTemp->next;/*移动临时指针到下一个结点*/
+           iIndex++;/*进行自加运算*/
+       }
+   }
+
+   void insert_data(struct Student **pHead,int i, int e,int t){
+   	struct Student *temp;
+   	struct Student *target;
+   	struct Student *p;
+   	int item;
+   	int j=1;
+   	int tt;
+    printf("insert_data:\n");
+    item=e;
+    tt=t;
+    target=*pHead;
+    for(;j<i-1;target=target->next,++j);  //不断移动target位置，到要插入结点位置，
+    temp=(struct Student *)malloc(sizeof(struct Student));   //申请内存空间
+    temp->cName=item;       //存入要存入的数据位置
+    temp->iNumber=tt;
+    p=target->next;
+    target->next=temp;
+    temp->next=p;
+    iCount++;
+   }
+
+   void Delete(struct Student *pHead,int number)
+   {
+	   int i;
+       struct Student *pTemp;/*临时指针*/
+       struct Student *pPre;/*表示要删除结点前的结点*/
+       pTemp=pHead;/*得到链表的头结点*/
+       pPre=pTemp;
+       for(i=0;i<number;i++)
+       {/*通过for循环使得Temp指向要删除的结点*/
+           pPre=pTemp;
+           pTemp=pTemp->next;
+       }
+       pPre->next=pTemp->next;/*连接删除结点两边的结点*/
+       free(pTemp);/*释放要删除结点的内存空间*/
+       iCount--;/*减少链表中的结点个数*/
+       printf("del\n");
+
+   }
+
