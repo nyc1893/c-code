@@ -1,0 +1,4 @@
+win10 cmd 下面：
+
+python -m pip install -U threading
+python -m pip install -U <文件名>
