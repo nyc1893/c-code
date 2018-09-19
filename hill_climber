@@ -1,0 +1,98 @@
+//============================================================================
+// Name        : cs776hw1.cpp
+// Author      : Yunchuan Liu
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
+#include <iostream>
+#include <stdlib.h>
+
+using namespace std;
+// g++ -o solver main-v2.cpp eval1.o
+
+//       ./solver
+
+int eval(int a[100])
+{
+    int k =0;
+    int sum=0;
+	for(k=0;k<100;k++)
+	{
+		sum= sum+a[k];
+	}
+	return sum;
+}
+
+void change_state(int *pj)
+{
+	int index = rand() % 100;
+	*(pj + index) = !*(pj + index);
+
+}
+
+
+
+int main()
+{
+  int vec[100];
+
+  int i=0;
+
+  int k =0;
+  for(i = 0; i < 100; i++){
+    vec[i] = rand() % 2;
+  }
+  int fitness=0;
+  //int *b = newvalue(vec);
+  int temp_fit =0;//temp is just to try if becomes better than let non-temp update to temp
+
+  int temp_vec[100];
+	for(k=0;k<100;k++)
+	{
+		temp_vec[k]= vec[k];
+	}
+
+  fitness = eval(vec);
+  cout << "fitness = " << fitness << endl;
+
+
+
+
+
+    while(fitness<100)
+    {
+
+
+        change_state(temp_vec);
+      temp_fit = eval(temp_vec);
+      if( temp_fit>fitness) {
+          cout << "yeah it works!" << endl;
+            for(k=0;k<100;k++)
+            {
+                vec[k]= temp_vec[k];
+            }
+          fitness = temp_fit;
+          cout << "fitness = " << fitness << endl;
+          cout << "Now the array is:"  << endl;
+                for (i = 0; i < 100; i++)
+      {
+          cout << temp_vec[i]<<" ";
+
+      }
+          cout  << endl;
+
+      }
+        for(k=0;k<100;k++)
+        {
+            temp_vec[k]= vec[k];
+        }
+
+    }
+
+
+}
+
+
+
