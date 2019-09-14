@@ -1,0 +1,294 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include<malloc.h>
+#define c_num 7
+#define MAX_LINE 50
+
+
+int getv2(char s1[]) ///////////// problem
+ {
+
+    char s2[20];
+
+    strncpy(s2, s1, strlen(s1)-strlen(";"));
+
+    int n = atoi(s2);
+//    printf("%d\n",n);
+    return n;
+}
+
+
+
+void SplitStrByStr( char *sources, char str, char arry[10][20], int* count){
+
+	int tmpCount = 0;
+	char* sourcesCp1 = NULL;
+	char* sourcesCp2 = NULL;
+	sourcesCp1 = sources;
+	sourcesCp2 = sources;
+
+	do{
+		//查找字符串s中首次出现字符c的位置
+		sourcesCp1 = strchr(sourcesCp1, str);
+		if (sourcesCp1 != NULL){
+			if (sourcesCp1 - sourcesCp2 > 0){
+				//返回找到字符的下一个位置 把之前的数据拷贝到数组中区
+				strncpy(arry[tmpCount], sourcesCp2, sourcesCp1 - sourcesCp2);
+				arry[tmpCount][sourcesCp1 - sourcesCp2] = '\0';
+				tmpCount++;
+				sourcesCp1++;
+				sourcesCp2 = sourcesCp1;
+			}
+		}
+		else
+		{
+			break;
+		}
+	} while (*sourcesCp1 != '\0');
+	*count = tmpCount;
+
+}
+
+
+
+
+int *getconf(char *fileName )
+{
+
+    int  digit;
+	char buf1[255];
+	char buf2[255];
+	char buf3[255];
+	char buf4[255];
+    char buf5[255];
+
+
+    static int temp[7];
+    char letter[50];
+//read conf file
+    int i = 0;
+    int j = 0;
+    int k =0;
+
+	 FILE * pFile;
+    char mystring [100];
+    char* res[999];    //store final result
+
+    int p=0;    //pointer of res[]
+    pFile = fopen (fileName , "r");
+    if (pFile == NULL)
+        perror ("Error opening file");
+    else
+    {
+        while ( fgets (mystring , 100 , pFile) != NULL )    //read a line every time
+
+        {
+            int len = strlen(mystring);
+            if(mystring[len-1]=='\n')
+                mystring[len-1] = '\0';
+
+            char* tmp = (char*)malloc(100*sizeof(char));
+            memcpy(tmp,mystring,len);//usage memcpy(dest, src, strlen(src));
+            res[p++] = tmp;
+            //puts (mystring);//put string every time
+        }
+        fclose (pFile);
+
+    //  int re_len = sizeof(res)/sizeof(res[0]);//wrong way to get arry lenth
+    //  printf("%d\n",re_len);
+//    for(i=0;i<p;i++)
+//      printf("%s\n",res[i]);
+    }
+        int k2 =0 ;
+     char *cof[c_num] = {"Monitor","Processor","Mouse","Hard","Keyboard","Memory","Printer"};
+
+     for(i=0;i<p;i++)
+     {
+         for (j=0;j<c_num;j++)
+        {
+             if(strstr(res[i],cof[j]))
+            {
+                if(j==3)sscanf(res[i],"%s %s %s %s %s %d ", buf1,buf2,buf3,buf4,buf5,&digit );
+                else sscanf(res[i],"%s %s %s %s %d ", buf1,buf2,buf3,buf4,&digit );
+                temp[j] =digit;
+            }
+        }
+     }
+     return temp;
+
+}
+
+
+char *getfileall(char *fname)
+{
+	FILE *fp;
+	char *str;
+	char txt[1000];
+	int filesize;
+	if ((fp=fopen(fname,"r"))==NULL){
+		printf("打开文件%s错误\n",fname);
+		return NULL;
+	}
+
+	fseek(fp,0,SEEK_END);
+
+	filesize = ftell(fp);
+	str=(char *)malloc(filesize);
+	str[0]=0;
+
+	rewind(fp);
+	while((fgets(txt,1000,fp))!=NULL){
+		strcat(str,txt);
+	}
+	fclose(fp);
+	return str;
+}
+
+int main()
+{
+    int *p = getconf("config_1.conf");
+    int i =0;
+    int j =0;
+//   for ( i = 0; i < 7; i++ )
+//   {
+//       printf( "*(p + %d) : %d\n", i, *(p + i));
+//   }
+
+    int a[9];
+    a[0] = *(p+1);
+    a[1] = *(p+5);
+    a[2] = *(p+0);
+    a[3] = *(p+3);
+    a[4] = *(p+2);
+    a[5] = *(p+6);
+    a[6] = *(p+5);
+    a[7] = *(p+3);
+    a[8] = *(p+4);
+
+    int line = 0;
+	char arry[30][20];
+
+//   for ( i = 0; i < 9; i++ )
+//   {
+//       printf( " %d\n", a[i]);
+//   }
+
+
+    char *pStr = NULL;
+	pStr=getfileall("test.mdf");
+	char tmpChar = '}';
+    char *delim = "}";
+
+	SplitStrByStr(pStr, tmpChar, arry, &line);
+  #define  option_num 9
+      char *option[option_num] = {"P{run","M{allocate","O{monitor","I{hard","I{mouse","O{printer","M{block","O{hard","I{key"};
+        for(i = 0; i < option_num; i++) {
+//        printf("option[%d] = %s\n", i+1, option[i]);
+    }
+//    ok(arry[30][20] ,"P{");
+    int b[option_num];
+    int k =0;
+
+    FILE *fpWrite=fopen("1.txt","w");
+            if(fpWrite==NULL)
+            {
+                return 0;
+            }
+
+
+
+
+
+
+    printf("Configuration File Data\n");
+    fprintf(fpWrite,"Configuration File Data\n");
+    i = 0;
+//PrintArryData(arry, line);
+    printf("Monitor = %d ms/cycle\n",*(p+i));
+    fprintf(fpWrite,"Monitor = %d ms/cycle\n",*(p+i));
+    i++;
+    printf("Processor = %d ms/cycle\n",*(p+i));
+    fprintf(fpWrite,"Processor = %d ms/cycle\n",*(p+i));
+    i++;
+    printf("Mouse = %d ms/cycle\n",*(p+i));
+    fprintf(fpWrite,"Mouse = %d ms/cycle\n",*(p+i));
+    i++;
+    printf("Hard Drive = %d ms/cycle\n",*(p+i));
+    fprintf(fpWrite,"Hard Drive = %d ms/cycle\n",*(p+i));
+    i++;
+    printf("Keyboard = %d ms/cycle\n",*(p+i));
+    fprintf(fpWrite,"Keyboard = %d ms/cycle\n",*(p+i));
+    i++;
+    printf("Memory = %d ms/cycle\n",*(p+i));
+    fprintf(fpWrite,"Memory = %d ms/cycle\n",*(p+i));
+    i++;
+    printf("Printer = %d ms/cycle\n",*(p+i));
+    fprintf(fpWrite,"Printer = %d ms/cycle\n",*(p+i));
+
+    printf("Logged to: monitor and logfile_1.lgf\n\n");
+    fprintf(fpWrite,"Logged to: monitor and logfile_1.lgf\n\n");
+
+    printf("Meta-Data Metrics\n");
+    fprintf(fpWrite,"Meta-Data Metrics\n");
+
+
+ for(i = 0; i < 20; i++)
+ {
+    for( j = 0; j < option_num; j++)
+    if(strstr(arry[i],option[j]))
+    {
+
+        k = getv2(arry[i+1]);
+//        printf("In line %d th, j = %d, value is =%d\n",i,j,k);
+
+         switch(j)
+        {
+           case 0:
+            printf("P{run}%d - %d ms\n",k,k*a[j]);
+            fprintf(fpWrite,"P{run}%d - %d ms\n",k,k*a[j]);
+              break;
+           case 1:
+            printf("M{allocate}%d - %d ms\n",k,k*a[j]);
+            fprintf(fpWrite,"M{allocate}%d - %d ms\n",k,k*a[j]);
+              break;
+           case 2:
+            printf("O{monitor}%d - %d ms\n",k,k*a[j]);
+            fprintf(fpWrite,"O{monitor}%d - %d ms\n",k,k*a[j]);
+              break;
+           case 3:
+            printf("I{hard drive}%d - %d ms\n",k,k*a[j]);
+            fprintf(fpWrite,"I{hard drive}%d - %d ms\n",k,k*a[j]);
+              break;
+           case 4:
+            printf("I{mouse}%d - %d ms\n",k,k*a[j]);
+            fprintf(fpWrite,"I{mouse}%d - %d ms\n",k,k*a[j]);
+              break;
+           case 5:
+            printf("O{printer}%d - %d ms\n",k,k*a[j]);
+            fprintf(fpWrite,"O{printer}%d - %d ms\n",k,k*a[j]);
+              break;
+           case 6:
+            printf("M{block}%d - %d ms\n",k,k*a[j]);
+            fprintf(fpWrite,"M{block}%d - %d ms\n",k,k*a[j]);
+              break;
+           case 7:
+            printf("O{hard drive}%d - %d ms\n",k,k*a[j]);
+            fprintf(fpWrite,"O{hard drive}%d - %d ms\n",k,k*a[j]);
+              break;
+           default:
+            printf("I{keyboard}%d - %d ms\n",k,k*a[j]);
+            fprintf(fpWrite,"I{keyboard}%d - %d ms\n",k,k*a[j]);
+              break;
+        }
+
+    }
+ }
+
+
+
+        fclose(fpWrite);
+        system("pause");
+
+    return 0;
+}
