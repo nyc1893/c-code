@@ -1,3 +1,8 @@
+/*
+This is a Q with char and int value in each cell
+
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
