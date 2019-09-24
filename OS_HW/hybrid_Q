@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include<malloc.h>
+
+#define ElementType1 int //store type
+#define ElementType2 char //store type
+#define MAXSIZE 20 //max store size
+#define ERROR -99 //ElementType for error notation
+
+typedef struct {
+    ElementType1 data[MAXSIZE];
+    ElementType2 *name[MAXSIZE];
+    int front; // start of Q
+    int rear; // end of Q
+    int size; //number of element
+}Queue;
+
+Queue* CreateQueue() {
+    Queue* q = (Queue*)malloc(sizeof(Queue));
+    if (!q) {
+        printf("Insufferent Space!\n");
+        return NULL;
+    }
+    q->front = -1;
+    q->rear = -1;
+    q->size = 0;
+    return q;
+}
+
+int IsFullQ(Queue* q) {
+    return (q->size == MAXSIZE);
+}
+
+void AddQ(Queue* q, ElementType1 item1,ElementType2 *item2 ) {
+    if (IsFullQ(q)) {
+        printf("Queue is full!\n");
+        return;
+    }
+    q->rear++;
+    q->rear %= MAXSIZE;
+    q->size++;
+    q->data[q->rear] = item1;
+    q->name[q->rear] = item2;
+}
+
+int IsEmptyQ(Queue* q) {
+    return (q->size == 0);
+}
+
+ElementType1 DeleteQ(Queue* q) {
+    if (IsEmptyQ(q)) {
+        printf("Empty Queue!\n");
+        return ERROR;
+    }
+    q->front++;
+    q->front %= MAXSIZE; //0 1 2 3 4 5
+    q->size--;
+    q->name[q->front];
+    return q->data[q->front];
+}
+
+void PrintQueue(Queue* q) {
+    if (IsEmptyQ(q)) {
+        printf("Empty Queue!\n");
+        return;
+    }
+    printf("Print out Queue:\n");
+    int index = q->front;
+    int i;
+    for (i = 0; i < q->size; i++) {
+        index++;
+        index %= MAXSIZE;
+        printf("%d %s\n", q->data[index],q->name[index]);
+    }
+    printf("\n");
+}
+
+
+//
+// Main Function Implementation ///////////////////////////////////
+//
+
+int main(int argc,char* argv[])
+{
+//    int *p = getconf("config_1.conf"); //get conf file information
+//	// and return a int type pf a 1 x 7 matrix value
+//
+//
+//    printConf("config_1.conf");
+//
+//    readmeta("test.mdf");
+//
+    Queue* q = CreateQueue();
+
+    AddQ(q, 0,"XIaoming");
+    AddQ(q, 1,"CC");
+
+    PrintQueue(q);
+
+    DeleteQ(q);
+
+    PrintQueue(q);
+
+
+
+    return 0;
+}
