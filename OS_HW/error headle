@@ -1,0 +1,33 @@
+
+#define _TRY_THROW_CATCH_H_
+
+#include <stdio.h>
+#include <setjmp.h>
+
+#define TRY do { jmp_buf ex_buf__; switch( setjmp(ex_buf__) ) { case 0: while(1) {
+#define CATCH(x) break; case x:
+#define FINALLY break; } default: {
+#define ETRY break; } } }while(0);
+#define THROW(x) longjmp(ex_buf__, x)
+
+
+
+#include <stdio.h>
+// Include the above library.
+
+int main(void)
+{
+    TRY
+        THROW(3);
+        printf("Hello World\n");
+    CATCH(1)
+        printf("Something wrong\n");
+    CATCH(2)
+        printf("More thing wrong\n");
+    CATCH(3)
+        printf("Yet another thing wrong\n");
+    FINALLY
+        printf("Clean resources\n");
+    ETRY
+    return 0;
+}
