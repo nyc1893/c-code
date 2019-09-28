@@ -1,23 +1,13 @@
-// Program Header Information ////////////////////////////////////////
-/**
-* @file Sim01.c
-*
-* @brief program for SIM01
-*
-* @details Simulation of a simle, one-program OS simulator
-*
-* @version 2.00
-*          C.S. Student (4 Sep 2019)
-*          Initial development of SIM02
-*
-* @note None
-*/
-// Program Description/Support /////////////////////////////////////
 /*
+Done：
+1. Error check 
+2. File info2 Queue
+
 To do:
-Thread Usage
-Timer
-Readme
+1.5-state PCB 
+2.Thread Usage
+3.Timer
+4. Readme
 */
 // Precompiler Directives //////////////////////////////////////////
 //
