@@ -1,7 +1,7 @@
 
 // Program Description/Support /////////////////////////////////////
 /*
-Only ok for linux
+Only works for linux instead of windows codeblock
 
 */
 // Precompiler Directives //////////////////////////////////////////
@@ -94,22 +94,35 @@ int main(int argc,char* argv[])
 {
     char *cof = "config_1.conf";
     char *meta = "test_1a.mdf";
+    if (argc < 2)
+    {  
+        printf("error!\n");
+        printf("The right format should be: ./sim conffile metafile\n");
+	printf("A referrence command should be: ./sim config_1.conf test_1a.mdf\n");
+  
+        return -1;
+    }
+ 
+    //printf("The first string of your command is:%s\n", argv[0]);
+   // printf("The second string of your command is:%s\n", argv[1]);
+   // printf("The third string of your command is:%s\n", argv[2]); 
 
-    if(!checksuffix(cof,".conf",6))
+
+    if(!checksuffix(argv[1],".conf",6))
     {
         printf("Input conf file suffix error!\n");
         printf("It should be: .conf!\n");
         return 0;
     }
 
-    if(!checksuffix(meta,".mdf",5))
+    if(!checksuffix(argv[2],".mdf",5))
     {
         printf("Input meta file suffix error!\n");
         printf("It should be: .mdf!\n");
         return 0;
     }
-
-    SimulatorTest(cof,meta);
+	SimulatorTest(argv[1],argv[2]);
+  //  SimulatorTest(cof,meta);
     return 0;
 }
 
