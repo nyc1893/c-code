@@ -1,6 +1,9 @@
+ //Refer to:
+ //https://www.linuxidc.com/Linux/2014-08/105636.htm
+
 #include <stdio.h>
 #include <string.h>
- 
+
 //int main(int argc, char *argv[])
  int main(int argc, char **argv)
  {
