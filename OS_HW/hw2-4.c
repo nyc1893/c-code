@@ -1,10 +1,7 @@
 
 // Program Description/Support /////////////////////////////////////
 /*
- This assignment tests the knowledge of strings, reading from files,
- and data structures. This assignment allows to create a library
- of functions/classes for use in later projects. And this assignment
- is designed as a data structures problem.
+Only ok for linux
 
 */
 // Precompiler Directives //////////////////////////////////////////
