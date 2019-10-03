@@ -1,0 +1,44 @@
+#include "stdio.h"
+#include "pthread.h"
+#include "unistd.h"
+
+typedef struct __DATA
+{
+    int     vint;
+    long    vlong;
+    double  vdouble;
+}DATA;
+
+void* myPrint(void* param)
+{
+    DATA* data = (DATA*)param;
+
+    printf("this is from myPrint\n");
+    printf("param1: %d, param2: %ld, param3: %f\n",
+            data->vint, data->vlong, data->vdouble);
+
+    return (void*)"xrkzn.cn";
+}
+
+int main()
+{
+    pthread_t pid;
+
+    int param1 = 11;
+    long param2 = 222;
+    double param3 = 333.44;
+
+    DATA data = {0};
+    data.vint = param1;
+    data.vlong = param2;
+    data.vdouble = param3;
+
+    pthread_create(&pid, NULL, myPrint, &data);
+
+    void* rtn;
+    pthread_join(pid, &rtn);
+
+    printf("myPrint return: %s\n", (char*)rtn);
+
+    return 0;
+}
