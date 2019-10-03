@@ -16,8 +16,8 @@ void* myPrint(void* param)
     printf("this is from myPrint\n");
     printf("param1: %d, param2: %ld, param3: %f\n",
             data->vint, data->vlong, data->vdouble);
-
-    return (void*)"xrkzn.cn";
+	return (void*)" ";
+    //return (void*)"xrkzn.cn";
 }
 
 int main()
@@ -38,7 +38,7 @@ int main()
     void* rtn;
     pthread_join(pid, &rtn);
 
-    printf("myPrint return: %s\n", (char*)rtn);
+    printf("%s\n", (char*)rtn);
 
     return 0;
 }
