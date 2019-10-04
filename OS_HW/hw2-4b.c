@@ -3,6 +3,23 @@
 /*
 only works for window code blocks
 
+
+SimulatorTest 中
+
+
+--->   Queue* q2 = CreateQueue();
+
+之前
+    int *q = readmeta2(fmeta);
+    if(!q){}
+
+ 
+--->        PrintQueue(q2);
+之前
+     DestroySequeue(q);
+     DestroySequeue(q2);
+
+
 */
 // Precompiler Directives //////////////////////////////////////////
 //
