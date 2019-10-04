@@ -2,7 +2,7 @@
 // Program Description/Support /////////////////////////////////////
 /*
 Only works for linux instead of windows codeblock
-
+No thread version
 */
 // Precompiler Directives //////////////////////////////////////////
 //
