@@ -30,8 +30,16 @@ typedef struct __DATA
     int     data2;
     double  vdouble;
     char    *words;
+    long    t1;
+    long    t2;
     // char    *word2;
 }DATA;
+
+struct _pcb{
+    int pid;
+    int state; // 1：start 2: ready：3: running  4: waiting  5： Exit
+
+}PCB;
 
 struct conf
   {
@@ -53,7 +61,7 @@ struct conf
 #define c_num 7
 #define MAX_LINE 50
 #define  option_num 9
-#define ElementType1 int //store type
+#define ElementType1 long //store type
 #define ElementType2 char //store type
 #define MAXSIZE 100 //max store size
 #define ERROR -99 //ElementType for error notation
@@ -98,6 +106,8 @@ int SimulatorTest(char *fconf,char *fmeta);
 void splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
 static void _split_whole_name(const char *whole_name, char *fname, char *ext);
 void* threadWait(void* param);
+void Printtime(Queue* q);
+void writeF(Queue* q);
 
 //
 // Main Function Implementation ///////////////////////////////////
@@ -108,20 +118,16 @@ int main(int argc,char* argv[])
     char *cof = "config_1.conf";
     char *meta = "test_1a.mdf";
     
-    /*
+
     if (argc < 2)
     {  
         printf("error!\n");
-        printf("The right format should be: ./sim conffile metafile\n");
-	printf("A referrence command should be: ./sim config_1.conf test_1a.mdf\n");
+        printf("The right format should be: ./sim conffile\n");
+        printf("A referrence command should be: ./sim config_1.conf\n");
   
         return -1;
     }
  
-    //printf("The first string of your command is:%s\n", argv[0]);
-   // printf("The second string of your command is:%s\n", argv[1]);
-   // printf("The third string of your command is:%s\n", argv[2]); 
-
 
     if(!checksuffix(argv[1],".conf",6))
     {
@@ -130,15 +136,15 @@ int main(int argc,char* argv[])
         return 0;
     }
 
-    if(!checksuffix(argv[2],".mdf",5))
+    if(!checksuffix(meta,".mdf",5))
     {
         printf("Input meta file suffix error!\n");
         printf("It should be: .mdf!\n");
         return 0;
     }
-    */
+
 	// SimulatorTest(argv[1],argv[2]);
-   SimulatorTest(cof,meta);
+   SimulatorTest(argv[1],meta);
     return 0;
 }
 
@@ -609,7 +615,8 @@ int SimulatorTest(char *fconf,char *fmeta)
     int j = 0;
     int k = 0;
     int proc = 0;
-
+    struct _pcb *p=(struct _pcb *)malloc(sizeof(struct _pcb));
+    Queue* q2 = CreateQueue();
     int *q = readmeta2(fmeta);
     if(!q){}
 
@@ -620,30 +627,37 @@ int SimulatorTest(char *fconf,char *fmeta)
         {
             end_t = clock();
             total_t = (end_t - start_t);
-            printf("%.3f - Simulator program starting\n",(total_t*0.1*10)/CLOCKS_PER_SEC);
+            // printf("%.3f - Simulator program starting\n",(total_t*0.1*10)/CLOCKS_PER_SEC);
             ++i;
             ++proc;
+            
+            p->state = 1;
+            p->pid =proc;
+            AddQ(q2, total_t,"Simulator program starting");
+             
         }
 
 
         if(strncmp(getQs(q,i),text3[0],8)==0)
         {
             ++i;
-
+            
 
 
             if(strncmp(getQs(q,i),text3[1],8)==0)
             {
                 ++i;
 LOOP:
+                p->state = 2;
+                p->pid =proc;
                 end_t = clock();
                 total_t = (end_t - start_t);
-                printf("%.3f - OS: preparing process %d\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
-
+                // printf("%.3f - OS: preparing process %d\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
+                AddQ(q2, total_t,"OS: preparing process");
                 end_t = clock();
                 total_t = (end_t - start_t);
-                printf("%.3f - OS: starting process %d\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
-
+                // printf("%.3f - OS: starting process %d\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
+                AddQ(q2, total_t,"OS: starting process");
 
 
                 while(strncmp(getQs(q,i),text3[2],8)!=0)//inside process
@@ -656,6 +670,7 @@ LOOP:
                         if(strncmp(getQs(q,i),text4[j],1)==0)
                         {
                             k = j;
+                            p->state = 3;
                         }
 
                     }
@@ -672,14 +687,14 @@ LOOP:
 //                                    printf("This is P{run}\n");
                                     end_t = clock();
                                     total_t = (end_t - start_t);
-                                    printf("%.3f - Process %d: start processing action\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
-
+                                    // printf("%.3f - Process %d: start processing action\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
+                                    AddQ(q2, total_t,"start processing action");
                                     SimulatorTimer(getQv(q,i)*Conf_Info.process);
 
                                     end_t = clock();
                                     total_t = (end_t - start_t);
-                                    printf("%.3f - Process %d: end processing action\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
-
+                                    // printf("%.3f - Process %d: end processing action\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
+                                    AddQ(q2, total_t,"end processing action");
                                 }
 
 //                            if(strncmp(getQs(q,i),text4[j],1)==0)
@@ -698,14 +713,14 @@ LOOP:
 //                                    printf("This is M{allocate}\n");
                                     end_t = clock();
                                     total_t = (end_t - start_t);
-                                    printf("%.3f - Process %d: allocating memory\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
-
+                                    // printf("%.3f - Process %d: allocating memory\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
+                                    AddQ(q2, total_t,"allocating memory");
                                     SimulatorTimer(getQv(q,i)*Conf_Info.memory);
 
                                     end_t = clock();
                                     total_t = (end_t - start_t);
-                                    printf("%.3f - Process %d: memory allocated at 0x00000010\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
-
+                                    // printf("%.3f - Process %d: memory allocated at 0x00000010\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
+                                    AddQ(q2, total_t,"memory allocated at 0x00000010");
                                 }
 
 
@@ -715,14 +730,14 @@ LOOP:
 
                                     end_t = clock();
                                     total_t = (end_t - start_t);
-                                    printf("%.3f - Process %d: start memory blocking\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
-
+                                    // printf("%.3f - Process %d: start memory blocking\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
+                                    AddQ(q2, total_t,"start memory blocking");
                                     SimulatorTimer(getQv(q,i)*Conf_Info.memory);
 
                                     end_t = clock();
                                     total_t = (end_t - start_t);
-                                    printf("%.3f - Process %d: end memory blocking\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
-
+                                    // printf("%.3f - Process %d: end memory blocking\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
+                                    AddQ(q2, total_t,"end memory blocking");
 
 
                                 }
@@ -750,8 +765,12 @@ LOOP:
 
                                         void* rtn;
                                         pthread_join(pid_1, &rtn);
-
+                                        // printf("%d  %d\n", data.t1, data.t2);  
+                                        
+                                        AddQ(q2, data.t1,"start keyboard Input");
+                                        AddQ(q2, data.t2,"end keyboard Input");
                                         printf("%s\n", (char*)rtn);
+                                        
 
                                 }
 
@@ -770,7 +789,9 @@ LOOP:
 
                                         void* rtn;
                                         pthread_join(pid_1, &rtn);
-
+                                        
+                                        AddQ(q2, data.t1,"start hard drive Input");
+                                        AddQ(q2, data.t2,"end hard drive Input");
                                         printf("%s\n", (char*)rtn);
 
 
@@ -791,7 +812,8 @@ LOOP:
 
                                         void* rtn;
                                         pthread_join(pid_1, &rtn);
-
+                                        AddQ(q2, data.t1,"start mouse Input");
+                                        AddQ(q2, data.t2,"end mouse Input");
                                         printf("%s\n", (char*)rtn);
                                     
 
@@ -824,7 +846,10 @@ LOOP:
 
                                         void* rtn;
                                         pthread_join(pid_1, &rtn);
-
+                                        
+                                        AddQ(q2, data.t1,"start monitor output");
+                                        AddQ(q2, data.t2,"end monitor output");
+                                        
                                         printf("%s\n", (char*)rtn);                                    
 
                                 }
@@ -842,7 +867,8 @@ LOOP:
 
                                         void* rtn;
                                         pthread_join(pid_1, &rtn);
-
+                                        AddQ(q2, data.t1,"start printer output");
+                                        AddQ(q2, data.t2,"end printer output");
                                         printf("%s\n", (char*)rtn);                                         
 
                                 }
@@ -861,7 +887,8 @@ LOOP:
 
                                         void* rtn;
                                         pthread_join(pid_1, &rtn);
-
+                                        AddQ(q2, data.t1,"start hard drive output");
+                                        AddQ(q2, data.t2,"end hard drive output");
                                         printf("%s\n", (char*)rtn);        
 
 
@@ -892,9 +919,10 @@ LOOP:
         {
             end_t = clock();
             total_t = (end_t - start_t);
-            printf("%.3f - OS: removing process %d\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
+            // printf("%.3f - OS: removing process %d\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
             i++;
-
+            p->state = 3;
+            AddQ(q2, total_t,"OS: removing process");
 
         }
 
@@ -921,13 +949,16 @@ LOOP:
         {
             end_t = clock();
             total_t = (end_t - start_t);
-            printf("%.3f - Simulator program ending\n",(total_t*0.1*10)/CLOCKS_PER_SEC);
+            // printf("%.3f - Simulator program ending\n",(total_t*0.1*10)/CLOCKS_PER_SEC);
             i++;
+            AddQ(q2, total_t,"Simulator program ending");
         }
     }
-
-
+     // printf("\n\n");
+     Printtime(q2);
+     writeF(q2);
      DestroySequeue(q);
+     DestroySequeue(q2);
 }
 
 
@@ -1009,14 +1040,105 @@ void* threadWait(void* param)
     // printf("word: %s\n",data->words);        
     end_t = clock();
     total_t = (end_t - (data->vdouble));
-    printf("%.3f - Process %d: start %s\n",(total_t*0.1*10)/CLOCKS_PER_SEC,data->proc,data->words);
-
+    // printf("%.3f - Process %d: start %s\n",(total_t*0.1*10)/CLOCKS_PER_SEC,data->proc,data->words);
+    data->t1 = total_t;
     SimulatorTimer((data->data1)*(data->data2));
 
     end_t = clock();
     total_t = (end_t - (data->vdouble));
-    printf("%.3f - Process %d: end %s",(total_t*0.1*10)/CLOCKS_PER_SEC,data->proc,data->words);            
+    // printf("%.3f - Process %d: end %s",(total_t*0.1*10)/CLOCKS_PER_SEC,data->proc,data->words);            
+    data->t2 = total_t;
+	return (void*)"";
+}
 
-	return (void*)" ";
+void Printtime(Queue* q)
+{
+    if (IsEmptyQ(q)) 
+    {
+        printf("Empty Queue!\n");
+
+    }
+    // printf("Print out Queue:\n");
+    int index = q->front;
+    int i;
+    int numP = 0;
+    for (i = 0; i < q->size; i++) 
+    {
+        index++;
+        index %= MAXSIZE;
+
+        
+        if(strstr(q->name[index],"preparing process"))
+            {++numP;}
+        
+
+        
+        if(strstr(q->name[index],"OS"))
+        {
+            printf("%.3f - %s process %d\n", (q->data[index]*0.1*10)/CLOCKS_PER_SEC,q->name[index],numP);
+        }
+        else
+        {
+             if(strstr(q->name[index],"Simulator"))
+            {
+                printf("%.3f - %s\n", (q->data[index]*0.1*10)/CLOCKS_PER_SEC,q->name[index]);
+            }
+            else
+            {
+                printf("%.3f - process %d: %s\n", (q->data[index]*0.1*10)/CLOCKS_PER_SEC,numP,q->name[index]);
+            }
+        }
+    }
+    printf("\n");
+}
+
+
+
+void writeF(Queue* q)
+{
+FILE *fp = NULL;
+
+   fp = fopen("output.txt", "w+");
+
+
+    if (IsEmptyQ(q)) 
+    {
+        printf("Empty Queue!\n");
+
+    }
+    // printf("Print out Queue:\n");
+    int index = q->front;
+    int i;
+    int numP = 0;
+    for (i = 0; i < q->size; i++) 
+    {
+        index++;
+        index %= MAXSIZE;
+
+        
+        if(strstr(q->name[index],"preparing process"))
+            {++numP;}
+        
+
+        
+        if(strstr(q->name[index],"OS"))
+        {
+            fprintf(fp,"%.3f - %s process %d\n", (q->data[index]*0.1*10)/CLOCKS_PER_SEC,q->name[index],numP);
+        }
+        else
+        {
+             if(strstr(q->name[index],"Simulator"))
+            {
+                fprintf(fp,"%.3f - %s\n", (q->data[index]*0.1*10)/CLOCKS_PER_SEC,q->name[index]);
+            }
+            else
+            {
+                fprintf(fp,"%.3f - process %d: %s\n", (q->data[index]*0.1*10)/CLOCKS_PER_SEC,numP,q->name[index]);
+            }
+        }
+    }
+
+
+   fclose(fp);
 
 }
