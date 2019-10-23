@@ -30,3 +30,47 @@ int main()
 
    return 0;
 }
+
+
+
+/*
+Another way
+*/
+#include<stdio.h>
+
+#include<sys/time.h>
+#include <time.h>
+#include<unistd.h>
+
+
+
+
+void wait(int num)
+
+{
+
+	usleep(1000*num);
+
+}
+
+int main()
+
+{
+	
+	
+	float time_use=0;
+	struct timeval start;
+	struct timeval end;//struct timezone tz; //后面有说明
+	gettimeofday(&start,NULL); //gettimeofday(&start,&tz);结果一样
+	// printf("start.tv_sec:%d\n",start.tv_sec);
+	// printf("start.tv_usec:%d\n",start.tv_usec);
+
+	wait(10);
+	gettimeofday(&end,NULL);
+	// printf("end.tv_sec:%d\n",end.tv_sec);
+	// printf("end.tv_usec:%d\n",end.tv_usec);
+	time_use=(end.tv_sec-start.tv_sec)*1000000+(end.tv_usec-start.tv_usec);//微秒
+	printf("time_use is %.0f ms\n",time_use/1000);
+       
+
+}
