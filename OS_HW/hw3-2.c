@@ -106,7 +106,6 @@
     }Queue;
 
 
-
 //
 // Class Definitions //////////////////////////////////////////////
 //
@@ -142,6 +141,7 @@
     void writeF(Queue* q);
 	int allocateHardDrive();
 	int allocatePrinter();
+	unsigned int allocateMemory();
 //
 // Main Function Implementation ///////////////////////////////////
 //
@@ -919,14 +919,14 @@
                                         // printf("%.3f - Process %d: memory allocated at 0x00000010\n",(total_t*0.1*10)/CLOCKS_PER_SEC,proc);
 										p->state = 2;
 								
-										AddQ(q2, total_t,"memory allocated at",mem_call*128);
-			
-										// printf("Now is %04o\n",mem_call*128);
-										++mem_call;
+										AddQ(q2, total_t,"memory allocated at",allocateMemory());
+		
                                         
                                     }
 
 
+									
+									
                                     if(strstr(getQs(q,i),"block"))
                                     {
     //                                    printf("This is M{block}\n");
@@ -1460,4 +1460,11 @@
 			return UsedPrinters;
 		}
 		return UsedPrinters;
+	}
+	unsigned int allocateMemory()
+	{
+		unsigned int address;
+		address = mem_call*128;
+		mem_call++;
+		return address;
 	}
