@@ -151,26 +151,22 @@
 	int SJF_op(char* pStr);
 	int PS_op(char* pStr);
 	void sort(int*aa, int *a, int l);
+	void sort2(int*aa, int *a, int l);
 	int delete_sub_str(const char *str, const char *sub_str, char *result_str);
 	void headle_SFJ(char *name);
 	int wr1D(int a[100]);
 	void readmeta(char *fileName);
 	int * checkmeta(char *fileName);
+	void headle_FIFO(char *name);
+	void headle_PS(char *name);
 //
 // Main Function Implementation ///////////////////////////////////
 //
-
-
-
-
-
-  
-	
 	
     int main(int argc,char* argv[])
     {
-        char *cof = "config_1.conf";
-        char *meta = "test_1a.mdf";
+        char *cof = "config_2.conf";
+        char *meta = "test_1c.mdf";
         /*
         if (argc < 2)
         {  
@@ -1906,7 +1902,34 @@ int PS_op(char* pStr)
 }
 
 
+void sort2(int*aa, int *a, int l)
+{
+    int i, j;
+    int v;
+    int temp;
 
+    for(i = 0; i < l - 1; i ++)
+        for(j = i+1; j < l; j ++)
+        {
+            if(a[i] < a[j])
+            {
+//                printf("i = %d, j =%d\n",i,j);
+                temp =aa[i+1];
+                aa[i+1] = aa[j+1];
+                aa[j+1] = temp;
+
+                v = a[i];
+                a[i] = a[j];
+                a[j] = v;
+            }
+        }
+
+//    for (i=1;i<=l;i++)
+//    {
+//        printf("%d\t ", aa[i]);
+//    }
+
+}
 
 void sort(int*aa, int *a, int l)
 {
@@ -1997,6 +2020,216 @@ int delete_sub_str(const char *str, const char *sub_str, char *result_str)
 //
 //    return arr;
 //}
+
+
+
+void headle_FIFO(char *name)
+{
+    char *sub_str1 = "S{begin}0;";
+    char *sub_str2 = "S{finish}0";
+    char *sub_str3 = ".";
+    char *str = name;
+    char res[1000];
+
+    delete_sub_str(str, sub_str1, res);
+    char *str2 = res;
+    delete_sub_str(str2,sub_str2, res);
+    char *str3 = res;
+    delete_sub_str(str3,sub_str3, res);
+//    printf("%s\n", res);
+
+    strcpy(name,res);
+
+        int line =0;
+      int i =0;
+    char* pStr  = name;
+
+    char tmpChar = '}';
+    char arry[100][20];
+    SplitStrByStr(pStr, tmpChar, arry, &line);
+
+//    printf("line = %d\n", line);
+
+    for(i = 0; i < line; i++)
+    {
+        if(strstr(arry[i],"A{finish"))
+            ++pp_num;
+    }
+	char e[5000]={};
+         strcpy(e,"S{begin}0;");
+
+        strcat(e,name);
+
+        strcat(e,"S{finish}0.");
+
+	int aa[pp_num];
+	for(i = 1;i<=pp_num;i++)
+	{
+		aa[i] = i;
+	}
+	wr1D(aa);
+    FILE *fp = NULL;
+   fp = fopen("sfj.txt", "w+");
+   fprintf(fp,"%s\n","Start Program Meta-Data Code:");
+   fprintf(fp,"%s",e);
+   fprintf(fp,"\n%s\n","End Program Meta-Data Code.");
+    fclose(fp);
+}
+
+
+void headle_PS(char *name)
+{
+    char *sub_str1 = "S{begin}0;";
+    char *sub_str2 = "S{finish}0";
+    char *sub_str3 = ".";
+    char *str = name;
+    char res[1000];
+
+    delete_sub_str(str, sub_str1, res);
+    char *str2 = res;
+    delete_sub_str(str2,sub_str2, res);
+    char *str3 = res;
+    delete_sub_str(str3,sub_str3, res);
+//    printf("%s\n", res);
+
+
+    strcpy(name,res);
+
+        int line =0;
+      int i =0;
+    char* pStr  = name;
+
+    char tmpChar = '}';
+    char arry[100][20];
+    SplitStrByStr(pStr, tmpChar, arry, &line);
+
+//    printf("line = %d\n", line);
+
+    for(i = 0; i < line; i++)
+    {
+        if(strstr(arry[i],"A{finish"))
+            ++pp_num;
+    }
+
+//    printf("pp_num = %d\n", pp_num);
+
+    char c[20][500]={};
+    int  d[20] ={};
+    char e[5000]={};
+
+    if(pp_num==1)
+    {
+         strcpy(e,"S{begin}0;");
+
+        strcat(e,name);
+
+        strcat(e,"S{finish}0.");
+        printf("\nfinial = %s\n",e);
+//        printf("%s\n\n",name);
+
+    }
+
+
+    if(pp_num==2)
+    {
+        strcpy(c[1],crush(name,0));
+        strcpy(c[0],crush(name,1));
+
+        // for (i =0; i<=1;i++)
+        // {
+           // printf("%d ", SJF_op(c[i]));
+           // printf("%s\n\n",c[i]);
+        // }
+
+
+        strcpy(e,"S{begin}0;");
+
+
+        if(PS_op(c[0])<PS_op(c[1]))
+        {
+            strcat(e,c[1]);
+            strcat(e,c[0]);
+        }
+        else
+        {
+            strcat(e,c[0]);
+            strcat(e,c[1]);
+        }
+
+        strcat(e,"S{finish}0.");
+        printf("\nfinial = %s\n",e);
+
+    }
+
+
+    else if(pp_num>2)
+    {
+        strcpy(c[1],crush(name,0));
+        strcpy(c[0],crush(name,1));
+
+        for(i=2;i<pp_num-1;i++)
+         {
+//             printf("Hi\n");
+
+            strcpy(c[i],crush(c[0],0));
+            strcpy(c[0],crush(c[0],1));
+
+
+//            printf("%d\n",i);
+//            printf("%s\n\n",c[0]);
+         }
+
+            strcpy(c[pp_num-1],crush(c[0],0));
+            strcpy(c[pp_num],crush(c[0],1));
+
+
+//            printf("print out\n",i);
+            for (i =1; i<=pp_num;i++)
+            {
+                remove_space(c[i],c[i]);
+//                printf("%s\n",c[i]);
+                d [i-1]= PS_op(c[i]);
+//                printf("SJF[%d] = %d\n\n",i-1,d[i-1]);
+
+            }
+            int aa[pp_num+1];
+            for (i=1;i<=pp_num;i++)
+            {
+                aa[i] =i;
+            }
+
+             sort2(aa,d, pp_num);
+//             printf("After sort\n");
+
+
+
+
+
+            strcpy(e,"S{begin}0;");
+//            printf("c[%d] = %s\n\n",i, c[aa[i]]);
+            for (i =1; i<=pp_num;i++)
+            {
+                // printf("arr[%d] = %d\n\n",i, aa[i]);
+                // printf("c[%d] = %s\n\n",i, c[aa[i]]);
+                strcat(e,c[aa[i]]);
+            }
+
+            strcat(e,"S{finish}0.");
+        // printf("\nfinial = %s\n",e);
+
+			wr1D(aa);
+    }
+    FILE *fp = NULL;
+   fp = fopen("sfj.txt", "w+");
+   fprintf(fp,"%s\n","Start Program Meta-Data Code:");
+   fprintf(fp,"%s",e);
+   fprintf(fp,"\n%s\n","End Program Meta-Data Code.");
+    fclose(fp);
+	
+}
+
+  
+
 
 void headle_SFJ(char *name)
 {
@@ -2153,11 +2386,6 @@ void headle_SFJ(char *name)
    fprintf(fp,"\n%s\n","End Program Meta-Data Code.");
     fclose(fp);
 	
-	
-
-	
-
-	
 }
 int wr1D(int a[100])
 {
@@ -2229,8 +2457,20 @@ void readmeta(char *fileName)
 				
 			}
 			// printf("name = %s\n",name);
-			headle_SFJ(name);
 			
+			if(!Conf_Info.scheducode)
+			{
+				headle_SFJ(name);
+			}
+			else if (Conf_Info.scheducode)
+			{
+				headle_FIFO(name);
+			}
+			else if (Conf_Info.scheducode==2)
+			{
+				headle_PS(name);
+			}
+
 			
     }
 	
