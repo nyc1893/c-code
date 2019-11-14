@@ -736,7 +736,7 @@
 
         for(j=0;j<k;j++)
         {
-			printf("C[%d] = %s \n",j,c[j]);
+			// printf("C[%d] = %s \n",j,c[j]);
 			if (strncmp(c[j],text1[0], 1) == 0)			//when it is S
 			{
 				if((strncmp(c[j],"S{begin}", 8) == 0)||(strncmp(c[j],"S{finish}", 9) == 0)){}
