@@ -1,5 +1,6 @@
-
-    
+//Makefile
+//    all: main.c
+//	gcc -w -pthread -o sim main.c
 // Program Header Information ////////////////////////////////////////
 /**
 * @file main.c
