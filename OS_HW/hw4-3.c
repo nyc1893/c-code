@@ -4,13 +4,13 @@
 /**
 * @file main.c
 *
-* @brief program for SIM03
+* @brief program for SIM04
 * 
 * @details Simulation of a simle, one-program OS simulator
 *
 * @version 1.00
-*          C.S. Student (25 Oct 2019)
-*          Initial development of SIM03
+*          C.S. Student (14 Nov 2019)
+*          Initial development of SIM04
 *
 * @note None
 */
