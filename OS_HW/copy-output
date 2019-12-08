@@ -1,0 +1,4 @@
+ 1. by using makefile to get a.out 
+ 2. 
+ command
+ ./a.out | tee outout.txt
