@@ -2,6 +2,9 @@
 /*
  to  compile:
  gcc -pthread main.c
+ 
+ hw5-sjf done 
+ In using need to delete pread done!
 */
 
 #include <stdio.h>
