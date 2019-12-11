@@ -2,6 +2,9 @@
 /*
  to  compile:
  gcc -pthread main.c
+ 
+ finish RR logic 
+  need to change  the output 
 */
 
 #include <stdio.h>
